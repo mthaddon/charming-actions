@@ -21490,17 +21490,19 @@ class Artifact {
             // We're running some charmcraft commands as sudo as others as a
             // regular user. We want to capture both kinds.
             const logPaths = ['/home/runner/snap/charmcraft/common/cache/charmcraft/log', '/root/snap/charmcraft/common/cache/charmcraft/log/'];
+            var msg = [];
             logPaths.forEach(function(basePath){
                 if (!fs.existsSync(basePath)) {
-                    return 'No charmcraft logs found at '+basePath+', skipping artifact upload.';
+                    msg.push('No charmcraft logs found at '+basePath+', skipping artifact upload.');
                 } else {
                     const globber = yield glob.create(`${basePath}/*.log`);
                     const files = yield globber.glob();
                     const artifacts = artifact.create();
                     const result = yield artifacts.uploadArtifact('charmcraft-logs', files, basePath);
-                    return `Artifact upload result: ${JSON.stringify(result)}`;
+                    msg.push(`Artifact upload result: ${JSON.stringify(result)}`);
                 }
             });
+            return msg.join('\r\n');
         });
     }
 }
