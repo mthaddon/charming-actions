@@ -21487,15 +21487,20 @@ const glob = __importStar(__nccwpck_require__(8090));
 class Artifact {
     uploadLogs() {
         return __awaiter(this, void 0, void 0, function* () {
-            const basePath = '/root/snap/charmcraft/common/cache/charmcraft/log/';
-            if (!fs.existsSync(basePath)) {
-                return 'No charmcraft logs generated, skipping artifact upload.';
-            }
-            const globber = yield glob.create(`${basePath}/*.log`);
-            const files = yield globber.glob();
-            const artifacts = artifact.create();
-            const result = yield artifacts.uploadArtifact('charmcraft-logs', files, basePath);
-            return `Artifact upload result: ${JSON.stringify(result)}`;
+            // We're running some charmcraft commands as sudo as others as a
+            // regular user. We want to capture both kinds.
+            const logPaths = ['/home/runner/snap/charmcraft/common/cache/charmcraft/log', '/root/snap/charmcraft/common/cache/charmcraft/log/'];
+            logPaths.forEach(function(basePath){
+                if (!fs.existsSync(basePath)) {
+                    return 'No charmcraft logs found at '+basePath+', skipping artifact upload.';
+                } else {
+                    const globber = yield glob.create(`${basePath}/*.log`);
+                    const files = yield globber.glob();
+                    const artifacts = artifact.create();
+                    const result = yield artifacts.uploadArtifact('charmcraft-logs', files, basePath);
+                    return `Artifact upload result: ${JSON.stringify(result)}`;
+                }
+            });
         });
     }
 }
