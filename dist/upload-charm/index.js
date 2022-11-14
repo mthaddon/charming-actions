@@ -21487,7 +21487,7 @@ const glob = __importStar(__nccwpck_require__(8090));
 class Artifact {
     uploadLogs() {
         return __awaiter(this, void 0, void 0, function* () {
-            const basePath = '/home/runner/snap/charmcraft/common/cache/charmcraft/log';
+            const basePath = '/root/snap/charmcraft/common/cache/charmcraft/log/';
             if (!fs.existsSync(basePath)) {
                 return 'No charmcraft logs generated, skipping artifact upload.';
             }
